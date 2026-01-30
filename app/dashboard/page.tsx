@@ -2,14 +2,16 @@
 
 import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { signOut } from '@/lib/firebase/auth';
+import { getUserPortfolio } from '@/lib/firebase/firestore';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
 
 export default function DashboardPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const [characterCount, setCharacterCount] = useState(0);
 
   useEffect(() => {
     // Redirect unauthenticated users
@@ -17,6 +19,18 @@ export default function DashboardPage() {
       router.push('/auth/login');
     }
   }, [user, loading, router]);
+
+  useEffect(() => {
+    // Fetch portfolio to get character count
+    if (user) {
+      getUserPortfolio(user.id)
+        .then(portfolio => {
+          const count = Object.keys(portfolio).length;
+          setCharacterCount(count);
+        })
+        .catch(err => console.error('Error fetching portfolio:', err));
+    }
+  }, [user]);
 
   const handleSignOut = async () => {
     try {
@@ -121,14 +135,14 @@ export default function DashboardPage() {
           </div>
 
           {/* Portfolio Card */}
-          <div className="bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl p-6 text-white shadow-lg">
+          <Link href="/portfolio" className="bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold">Portfolio</h3>
               <span className="text-3xl">📊</span>
             </div>
-            <p className="text-4xl font-bold">0</p>
+            <p className="text-4xl font-bold">{characterCount}</p>
             <p className="text-sm opacity-90 mt-2">Characters owned</p>
-          </div>
+          </Link>
         </div>
 
         {/* Quick Actions Section */}
@@ -144,6 +158,16 @@ export default function DashboardPage() {
               </h4>
               <p className="text-white text-sm opacity-90">
                 Browse and buy company characters
+              </p>
+            </Link>
+
+            <Link href="/portfolio" className="bg-gradient-to-br from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 rounded-xl p-6 text-center transition-all transform hover:scale-105 shadow-lg">
+              <div className="text-5xl mb-3">💼</div>
+              <h4 className="text-lg font-semibold text-white mb-2">
+                My Portfolio
+              </h4>
+              <p className="text-white text-sm opacity-90">
+                View your characters and profits
               </p>
             </Link>
 
