@@ -37,13 +37,11 @@ export async function registerUser(
       parentId = undefined;
     }
 
-    // Create user document in Firestore
+    // Create user document in Firestore - build object without undefined values
     const userData: any = {
       email,
       name,
       role,
-      ...(age !== undefined && { age }), // Only include age if defined
-      ...(parentId && { parentId }), // Only include parentId if defined
       balance: 10000, // Starting balance
       experience: 0,
       level: 1,
@@ -51,10 +49,24 @@ export async function registerUser(
       settings: {
         notifications: true,
         allowTrading: true,
-        ...(role === 'child' && { spendingLimit: 1000 }), // Only for children
         ageGroup: age ? getAgeGroup(age) : 'middle',
       },
     };
+
+    // Only add age if it's defined and valid
+    if (age !== undefined && !isNaN(age)) {
+      userData.age = age;
+    }
+
+    // Only add parentId if it exists
+    if (parentId) {
+      userData.parentId = parentId;
+    }
+
+    // Only add spendingLimit for children
+    if (role === 'child') {
+      userData.settings.spendingLimit = 1000;
+    }
 
     await setDoc(doc(db, 'users', firebaseUser.uid), userData);
 
