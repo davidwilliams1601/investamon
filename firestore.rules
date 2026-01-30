@@ -1,0 +1,71 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Helper function to check if user owns the document
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Users collection
+    match /users/{userId} {
+      // Users can read their own data
+      allow read: if isOwner(userId);
+
+      // Users can create their own user document during registration
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+
+      // Users can update their own data
+      allow update: if isOwner(userId);
+
+      // No one can delete user documents (handle via Cloud Functions or Admin SDK)
+      allow delete: if false;
+    }
+
+    // Characters collection (read-only for all authenticated users)
+    match /characters/{characterId} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Only admins can manage characters
+    }
+
+    // User portfolios subcollection
+    match /users/{userId}/portfolio/{portfolioId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // User transactions subcollection
+    match /users/{userId}/transactions/{transactionId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update, delete: if false; // Transactions are immutable
+    }
+
+    // Challenges collection (read-only for authenticated users)
+    match /challenges/{challengeId} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Only admins can manage challenges
+    }
+
+    // User challenge progress subcollection
+    match /users/{userId}/challengeProgress/{progressId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // News collection (read-only for authenticated users)
+    match /news/{newsId} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Only admins can manage news
+    }
+
+    // Leaderboard collection (read-only for authenticated users)
+    match /leaderboard/{entryId} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Updated via Cloud Functions
+    }
+  }
+}
