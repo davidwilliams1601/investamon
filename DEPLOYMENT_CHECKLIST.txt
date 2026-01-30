@@ -1,0 +1,125 @@
+🚀 INVESTIMON V2 - DEPLOYMENT CHECKLIST
+========================================
+
+📋 STEP 1: LOCAL SETUP (In Terminal)
+□ Run: nvm use 20
+□ Run: cd /Users/dwilliams/Desktop/investimon-v2
+□ Run: rm -rf node_modules package-lock.json && npm install
+□ Run: npm run build (should succeed)
+□ Run: npm run dev (test at http://localhost:3000)
+
+🔥 STEP 2: FIREBASE SETUP (5 minutes)
+□ Go to: https://console.firebase.google.com/
+□ Click "Add project"
+□ Name: investimon-prod
+□ Create project
+
+AUTHENTICATION:
+□ Build → Authentication → Get Started
+□ Enable "Email/Password"
+
+FIRESTORE:
+□ Build → Firestore Database → Create
+□ Choose "Test mode"
+□ Select location: europe-west2 (London)
+
+GET CONFIG:
+□ Project Settings (gear icon)
+□ Your apps → Web icon (</>)
+□ Register app: "InvestiMon Web"
+□ Copy the firebaseConfig values
+
+UPDATE .ENV.LOCAL:
+□ Edit: /Users/dwilliams/Desktop/investimon-v2/.env.local
+□ Paste your Firebase config values
+□ Save file
+
+TEST LOCALLY:
+□ Run: npm run dev
+□ Open: http://localhost:3000
+□ Register test account
+□ Check Firebase Console → Authentication (user should appear)
+
+🐙 STEP 3: GITHUB (2 minutes)
+□ Run: cd /Users/dwilliams/Desktop/investimon-v2
+□ Run: git init
+□ Run: git add .
+□ Run: git commit -m "Initial commit - InvestiMon v2"
+□ Run: git branch -M main
+
+CREATE REPO:
+□ Go to: https://github.com/new
+□ Name: investimon-v2
+□ Private repository
+□ Create repository
+
+PUSH:
+□ Run: git remote add origin https://github.com/YOUR_USERNAME/investimon-v2.git
+□ Run: git push -u origin main
+
+▲ STEP 4: VERCEL (3 minutes)
+□ Go to: https://vercel.com
+□ Sign in
+□ Click "Add New..." → "Project"
+□ Import: investimon-v2 repository
+
+ADD ENVIRONMENT VARIABLES (IMPORTANT!):
+Copy these from your .env.local:
+□ NEXT_PUBLIC_FIREBASE_API_KEY
+□ NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+□ NEXT_PUBLIC_FIREBASE_PROJECT_ID
+□ NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+□ NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+□ NEXT_PUBLIC_FIREBASE_APP_ID
+□ NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
+□ NEXT_PUBLIC_APP_NAME=InvestiMon
+
+Select: All environments (Production, Preview, Development)
+
+DEPLOY:
+□ Click "Deploy"
+□ Wait 2-3 minutes
+□ Copy your URL (e.g., investimon-v2.vercel.app)
+
+🔐 STEP 5: UPDATE FIREBASE (1 minute)
+□ Firebase Console → Authentication → Settings
+□ Scroll to "Authorized domains"
+□ Click "Add domain"
+□ Enter your Vercel URL: investimon-v2.vercel.app
+□ Save
+
+✅ STEP 6: TEST PRODUCTION
+□ Open your Vercel URL
+□ Register new account
+□ Check Firebase Console (user should appear)
+□ Test login
+□ Test dashboard
+□ Test on mobile
+
+🛡️ STEP 7: SECURITY RULES
+□ Firebase Console → Firestore → Rules
+□ Copy rules from DEPLOY_NOW.md
+□ Publish
+
+🎉 YOU'RE LIVE!
+
+Your URL: _________________.vercel.app
+
+From now on:
+git add .
+git commit -m "message"
+git push
+→ Auto-deploys in 2 minutes!
+
+SAVE YOUR CREDENTIALS:
+Firebase Project ID: _________________
+Vercel Project URL: _________________
+GitHub Repo: https://github.com/_______/investimon-v2
+
+NEXT STEPS:
+□ Build character collection page
+□ Add portfolio management
+□ Implement challenges
+□ Set up parent dashboard
+
+Remember: Every git push = automatic deployment! 🚀

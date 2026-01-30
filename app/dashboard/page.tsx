@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { signOut } from '@/lib/firebase/auth';
 import toast from 'react-hot-toast';
+import Link from 'next/link';
 
 export default function DashboardPage() {
   const { user, loading } = useAuth();
@@ -130,21 +131,21 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Coming Soon Section */}
+        {/* Quick Actions Section */}
         <div className="bg-white rounded-3xl shadow-xl p-8">
           <h3 className="text-2xl font-bold text-gray-800 mb-6">
-            🚧 Coming Soon
+            🎯 Quick Actions
           </h3>
           <div className="grid md:grid-cols-2 gap-6">
-            <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center">
+            <Link href="/characters" className="bg-gradient-to-br from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 rounded-xl p-6 text-center transition-all transform hover:scale-105 shadow-lg">
               <div className="text-5xl mb-3">📈</div>
-              <h4 className="text-lg font-semibold text-gray-700 mb-2">
-                Character Collection
+              <h4 className="text-lg font-semibold text-white mb-2">
+                Character Marketplace
               </h4>
-              <p className="text-gray-600">
-                Browse and collect company characters
+              <p className="text-white text-sm opacity-90">
+                Browse and buy company characters
               </p>
-            </div>
+            </Link>
 
             <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center">
               <div className="text-5xl mb-3">🎯</div>
