@@ -1,16 +1,26 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { signIn } from '@/lib/firebase/auth';
 import toast from 'react-hot-toast';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [justLoggedIn, setJustLoggedIn] = useState(false);
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
+
+  // Redirect to dashboard when auth state confirms user is logged in
+  useEffect(() => {
+    if (justLoggedIn && !authLoading && user) {
+      router.push('/dashboard');
+    }
+  }, [justLoggedIn, authLoading, user, router]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -20,10 +30,9 @@ export default function LoginPage() {
       await signIn(email, password);
       toast.success('Welcome back!');
 
-      // Wait a moment for Firebase auth state to propagate
-      setTimeout(() => {
-        router.push('/dashboard');
-      }, 1000);
+      // Set flag to trigger redirect once auth state updates
+      setJustLoggedIn(true);
+      // Keep loading state active until redirect happens
     } catch (error: any) {
       console.error('Sign in error:', error);
       toast.error(error.message || 'Failed to sign in');

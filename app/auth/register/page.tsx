@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { registerUser } from '@/lib/firebase/auth';
 import toast from 'react-hot-toast';
 import { UserRole } from '@/types';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
@@ -15,7 +16,16 @@ export default function RegisterPage() {
   const [role, setRole] = useState<UserRole>('child');
   const [age, setAge] = useState<string>('');
   const [loading, setLoading] = useState(false);
+  const [justRegistered, setJustRegistered] = useState(false);
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
+
+  // Redirect to dashboard when auth state confirms user is logged in
+  useEffect(() => {
+    if (justRegistered && !authLoading && user) {
+      router.push('/dashboard');
+    }
+  }, [justRegistered, authLoading, user, router]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -49,10 +59,9 @@ export default function RegisterPage() {
 
       toast.success('Account created! Welcome to InvestiMon! 🎉');
 
-      // Wait a moment for Firebase auth state to propagate
-      setTimeout(() => {
-        router.push('/dashboard');
-      }, 1000);
+      // Set flag to trigger redirect once auth state updates
+      setJustRegistered(true);
+      // Keep loading state active until redirect happens
     } catch (error: any) {
       console.error('Registration error:', error);
       toast.error(error.message || 'Failed to create account');
