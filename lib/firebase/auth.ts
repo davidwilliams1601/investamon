@@ -38,20 +38,20 @@ export async function registerUser(
     }
 
     // Create user document in Firestore
-    const userData: Omit<User, 'id'> = {
+    const userData: any = {
       email,
       name,
       role,
-      age,
-      parentId,
+      ...(age !== undefined && { age }), // Only include age if defined
+      ...(parentId && { parentId }), // Only include parentId if defined
       balance: 10000, // Starting balance
       experience: 0,
       level: 1,
-      createdAt: serverTimestamp() as any,
+      createdAt: serverTimestamp(),
       settings: {
         notifications: true,
         allowTrading: true,
-        spendingLimit: role === 'child' ? 1000 : undefined,
+        ...(role === 'child' && { spendingLimit: 1000 }), // Only for children
         ageGroup: age ? getAgeGroup(age) : 'middle',
       },
     };
