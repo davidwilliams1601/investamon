@@ -19,10 +19,14 @@ export default function LoginPage() {
     try {
       await signIn(email, password);
       toast.success('Welcome back!');
-      router.push('/dashboard');
+
+      // Wait a moment for Firebase auth state to propagate
+      setTimeout(() => {
+        router.push('/dashboard');
+      }, 1000);
     } catch (error: any) {
+      console.error('Sign in error:', error);
       toast.error(error.message || 'Failed to sign in');
-    } finally {
       setLoading(false);
     }
   };

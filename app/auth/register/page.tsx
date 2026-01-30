@@ -48,10 +48,14 @@ export default function RegisterPage() {
       );
 
       toast.success('Account created! Welcome to InvestiMon! 🎉');
-      router.push('/dashboard');
+
+      // Wait a moment for Firebase auth state to propagate
+      setTimeout(() => {
+        router.push('/dashboard');
+      }, 1000);
     } catch (error: any) {
+      console.error('Registration error:', error);
       toast.error(error.message || 'Failed to create account');
-    } finally {
       setLoading(false);
     }
   };
